@@ -18,11 +18,10 @@ function Login() {
     })
 
     if (error) {
-      console.error('Erro completo:', error)
-      setErro(`Erro: ${error.message}`)
+      setErro('Email ou password incorretos')
     } else {
       navigate('/admin')
-    } 
+    }
   }
 
   return (
