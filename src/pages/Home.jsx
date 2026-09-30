@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
+import { Link } from 'react-router-dom'
 
 function Home() {
   const [servicos, setServicos] = useState([])
@@ -24,6 +25,7 @@ function Home() {
     <div>
       <h1>Bem-vindo</h1>
       <p>Apresentação da barbeira, estilo de trabalho, etc.</p>
+      <Link to="/marcar">Marcar um corte</Link>
 
       <h2>Serviços</h2>
       <ul>
