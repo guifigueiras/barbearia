@@ -37,7 +37,6 @@ function Home() {
       </ul>
 
       <h2>Galeria</h2>
-      <h2>Galeria</h2>
       <div style={{ display: 'flex', gap: '10px' }}>
       <img src="/gallery/img1.jpg" width="150" />
       <img src="/gallery/img2.jpg" width="150" />
