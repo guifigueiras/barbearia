@@ -1,4 +1,4 @@
-const PASSO_MIN = 30      // de quantos em quantos minutos começam os horários
+const PASSO_MIN = 60      // de quantos em quantos minutos começam os horários
 const DIAS_A_FRENTE = 14  // quantos dias mostrar
 
 export function pad(n) {

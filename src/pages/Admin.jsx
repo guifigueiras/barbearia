@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import Pedidos from '../components/Pedidos'
 
 const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
 
@@ -32,6 +33,10 @@ function Admin() {
 
   async function adicionarBloqueio(e) {
     e.preventDefault()
+    if (novoBloqueio.fim <= novoBloqueio.inicio) {
+      alert('O fim do bloqueio tem de ser depois do início.')
+      return
+    }
     await supabase.from('bloqueios').insert(novoBloqueio)
     setNovoBloqueio({ inicio: '', fim: '', motivo: '' })
     carregarBloqueios()
@@ -51,6 +56,7 @@ function Admin() {
     <div>
       <h1>Painel da barbeira</h1>
       <button onClick={logout}>Sair</button>
+      <Pedidos />
 
       <h2>Horário semanal</h2>
       {horarios.map((h) => (
