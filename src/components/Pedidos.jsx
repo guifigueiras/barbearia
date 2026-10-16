@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { deLocalISO, pad } from '../utils/slots'
+import { linkWhatsApp, mensagemPedido } from '../utils/whatsapp'
 
 // Um horário "junta" com uma marcação se estiver a esta distância ou menos
 const MARGEM_JUNTAR_MIN = 60
@@ -14,8 +15,21 @@ function colide(inicio1, fim1, inicio2, fim2) {
   return inicio1 < fim2 && inicio2 < fim1
 }
 
+function LinkWhatsApp({ pedido, texto }) {
+  return (
+    <a
+      href={linkWhatsApp(pedido.telemovel, mensagemPedido(pedido))}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {texto}
+    </a>
+  )
+}
+
 function Pedidos() {
   const [pedidos, setPedidos] = useState([])
+  const [respondidos, setRespondidos] = useState([])
   const [bloqueios, setBloqueios] = useState([])
   const [aCarregar, setACarregar] = useState(true)
   const [erro, setErro] = useState('')
@@ -25,19 +39,27 @@ function Pedidos() {
   }, [])
 
   async function carregar() {
-    const [p, b] = await Promise.all([
+    const [p, r, b] = await Promise.all([
       supabase
         .from('pedidos')
         .select('*, servicos(nome), pedido_slots(inicio_proposto)')
         .in('estado', ['pendente', 'confirmado'])
         .order('criado_em'),
+      supabase
+        .from('pedidos')
+        .select('*, servicos(nome)')
+        .in('estado', ['recusado', 'cancelado'])
+        .order('criado_em', { ascending: false })
+        .limit(10),
       supabase.from('bloqueios').select('inicio, fim'),
     ])
 
-    if (p.error || b.error) {
-      setErro('Erro ao carregar pedidos: ' + (p.error?.message || b.error?.message))
+    const falha = p.error || r.error || b.error
+    if (falha) {
+      setErro('Erro ao carregar pedidos: ' + falha.message)
     } else {
       setPedidos(p.data)
+      setRespondidos(r.data)
       setBloqueios(b.data)
       setErro('')
     }
@@ -111,7 +133,8 @@ function Pedidos() {
             <strong>{p.nome_cliente}</strong> — {p.servicos?.nome} ({p.duracao_min} min)
             <br />
             <a href={`tel:${p.telemovel}`}>{p.telemovel}</a>
-            {p.email && <> · {p.email}</>}
+            {p.email && <> · {p.email}</>} ·{' '}
+            <LinkWhatsApp pedido={p} texto="Contactar por WhatsApp" />
 
             <ul>
               {slots.map((iso) => {
@@ -151,13 +174,32 @@ function Pedidos() {
         {confirmadas.map((c) => (
           <li key={c.id}>
             {formatar(c.inicio)} — {c.nome_cliente} ({c.servicos?.nome}) —{' '}
-            <a href={`tel:${c.telemovel}`}>{c.telemovel}</a>{' '}
+            <a href={`tel:${c.telemovel}`}>{c.telemovel}</a> ·{' '}
+            <LinkWhatsApp pedido={c} texto="Avisar por WhatsApp" />{' '}
             <button
               onClick={() =>
                 mudarEstado(c, 'cancelado', `Cancelar a marcação de ${c.nome_cliente}?`)
               }
             >
               Cancelar
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Recusados e cancelados (10 mais recentes)</h2>
+      {respondidos.length === 0 && <p>Nenhum.</p>}
+      <ul>
+        {respondidos.map((r) => (
+          <li key={r.id}>
+            {r.nome_cliente} ({r.servicos?.nome}) — {r.estado} ·{' '}
+            <LinkWhatsApp pedido={r} texto="Avisar por WhatsApp" />{' '}
+            <button
+              onClick={() =>
+                mudarEstado(r, 'pendente', `Repor o pedido de ${r.nome_cliente} como pendente?`)
+              }
+            >
+              Repor como pendente
             </button>
           </li>
         ))}
