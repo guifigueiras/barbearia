@@ -55,7 +55,9 @@ export function gerarSlots({ duracaoMin, disponibilidade, bloqueios, ocupados })
       }
     }
 
-    if (slots.length > 0) resultado.push({ dia, slots })
+        // remove horários repetidos e ordena
+    const unicos = [...new Map(slots.map((s) => [s.getTime(), s])).values()].sort((a, b) => a - b)
+    if (unicos.length > 0) resultado.push({ dia, slots: unicos })
   }
 
   return resultado
