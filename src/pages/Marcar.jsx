@@ -26,7 +26,7 @@ function Marcar() {
       const limite = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 15)
 
       const [s, d, b, o] = await Promise.all([
-        supabase.from('servicos').select('*').order('id'),
+        supabase.from('servicos').select('*').eq('ativo', true).order('id'),
         supabase.from('disponibilidade').select('*'),
         supabase.from('bloqueios').select('inicio, fim'),
         supabase.rpc('slots_ocupados', {

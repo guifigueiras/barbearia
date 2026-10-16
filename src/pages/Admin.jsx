@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import Pedidos from '../components/Pedidos'
+import Servicos from '../components/Servicos'
 
 const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
 
@@ -57,6 +58,7 @@ function Admin() {
       <h1>Painel da barbeira</h1>
       <button onClick={logout}>Sair</button>
       <Pedidos />
+      <Servicos />
 
       <h2>Horário semanal</h2>
       {horarios.map((h) => (

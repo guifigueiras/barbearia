@@ -10,6 +10,8 @@ function Home() {
       const { data, error } = await supabase
         .from('servicos')
         .select('*')
+        .eq('ativo', true)
+        .order('id')
 
       if (error) {
         console.error('Erro ao buscar serviços:', error)
