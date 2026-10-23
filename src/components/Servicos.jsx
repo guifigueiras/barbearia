@@ -65,6 +65,21 @@ function LinhaServico({ servico, aoAlterar }) {
     if (error) setErro(error.message)
     else aoAlterar()
   }
+    async function apagar() {
+    if (!window.confirm(`Apagar o serviço "${servico.nome}"? Não pode ser desfeito.`)) return
+
+    const { error } = await supabase.from('servicos').delete().eq('id', servico.id)
+
+    if (error) {
+      setErro(
+        error.code === '23503'
+          ? 'Este serviço já tem pedidos associados e não pode ser apagado. Esconde-o em vez disso.'
+          : error.message
+      )
+    } else {
+      aoAlterar()
+    }
+  }
 
   return (
     <div

@@ -117,6 +117,18 @@ function Pedidos() {
     carregar()
   }
 
+  async function apagar(pedido, aviso) {
+    if (!window.confirm(aviso)) return
+    const { data, error } = await supabase
+      .from('pedidos')
+      .delete()
+      .eq('id', pedido.id)
+      .select()
+    if (error) alert(error.message)
+    else if (data.length === 0) alert('Não foi possível apagar o pedido.')
+    carregar()
+  }
+
   if (aCarregar) return <p>A carregar pedidos...</p>
 
   return (
@@ -164,6 +176,17 @@ function Pedidos() {
             >
               Recusar pedido
             </button>
+                        {' '}
+            <button
+              onClick={() =>
+                apagar(
+                  p,
+                  `Apagar o pedido de ${p.nome_cliente}? Os horários que propôs também são apagados. Não pode ser desfeito.`
+                )
+              }
+            >
+              Apagar
+            </button>
           </div>
         )
       })}
@@ -182,6 +205,17 @@ function Pedidos() {
               }
             >
               Cancelar
+            </button>
+                        {' '}
+            <button
+              onClick={() =>
+                apagar(
+                  c,
+                  `Apagar a marcação de ${c.nome_cliente}? O horário volta a ficar livre e o cliente não é avisado (para isso usa "Cancelar"). Não pode ser desfeito.`
+                )
+              }
+            >
+              Apagar
             </button>
           </li>
         ))}
