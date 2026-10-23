@@ -123,6 +123,7 @@ function LinhaServico({ servico, aoAlterar }) {
         {aGuardar ? 'A guardar...' : 'Guardar'}
       </button>{' '}
       <button onClick={alternarAtivo}>{servico.ativo ? 'Esconder' : 'Mostrar'}</button>
+      <button onClick={apagar}>Apagar</button>
       {!servico.ativo && ' · escondido do site'}
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
     </div>

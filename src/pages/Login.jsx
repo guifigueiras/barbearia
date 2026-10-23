@@ -12,38 +12,53 @@ function Login() {
     e.preventDefault()
     setErro('')
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setErro('Email ou password incorretos')
+      console.error('Erro de login:', error)
+      setErro('Email ou password incorretos.')
     } else {
       navigate('/admin')
     }
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Entrar</button>
+    <main className="login">
+      <form className="cartao-login formulario" onSubmit={handleLogin}>
+        <h1>Entrar</h1>
+        <p className="suave">Área reservada.</p>
+        <label>
+          Email
+          <input
+            className="campo"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Password
+          <input
+            className="campo"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+        <button type="submit" className="btn btn-escuro">
+          Entrar
+        </button>
+        {erro && (
+          <p className="erro" role="alert">
+            {erro}
+          </p>
+        )}
       </form>
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-    </div>
+    </main>
   )
 }
 

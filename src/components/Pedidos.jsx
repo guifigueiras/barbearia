@@ -235,6 +235,17 @@ function Pedidos() {
             >
               Repor como pendente
             </button>
+                        {' '}
+            <button
+              onClick={() =>
+                apagar(
+                  r,
+                  `Apagar definitivamente o pedido de ${r.nome_cliente}? Não pode ser desfeito.`
+                )
+              }
+            >
+              Apagar
+            </button>
           </li>
         ))}
       </ul>

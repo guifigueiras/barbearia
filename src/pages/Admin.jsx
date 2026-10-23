@@ -84,9 +84,11 @@ function Admin() {
   }
 
   return (
-    <div>
-      <h1>Painel da barbeira</h1>
-      <button onClick={logout}>Sair</button>
+    <div className="admin">
+      <div className="admin-topo">
+        <h1>Painel</h1>
+        <button onClick={logout}>Sair</button>
+      </div>
       <Pedidos />
       <Servicos />
 

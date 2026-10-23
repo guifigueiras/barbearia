@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { gerarSlots, paraLocalISO, pad } from '../utils/slots'
+import { gerarSlots, paraLocalISO, pad, DIAS_A_FRENTE } from '../utils/slots'
+import { NEGOCIO, TELEMOVEL_LINK } from '../config'
+import { formatarPreco, formatarDuracao } from '../utils/formatar'
+import { linkWhatsApp } from '../utils/whatsapp'
 
 function Marcar() {
   const [servicos, setServicos] = useState([])
@@ -23,7 +26,7 @@ function Marcar() {
   useEffect(() => {
     async function carregar() {
       const hoje = new Date()
-      const limite = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 15)
+      const limite = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + DIAS_A_FRENTE + 1)
 
       const [s, d, b, o] = await Promise.all([
         supabase.from('servicos').select('*').eq('ativo', true).order('id'),
@@ -91,120 +94,188 @@ function Marcar() {
     })
     setAEnviar(false)
 
-    if (error) {
-      setErro(error.message)
-    } else {
-      setEnviado(true)
-    }
+    if (error) setErro(error.message)
+    else setEnviado(true)
   }
 
-  if (aCarregar) return <p>A carregar...</p>
+  if (aCarregar) {
+    return (
+      <div className="pagina">
+        <p className="suave">A carregar…</p>
+      </div>
+    )
+  }
 
   if (enviado) {
     return (
-      <div>
-        <h1>Pedido enviado!</h1>
+      <div className="pagina">
+        <p className="etiqueta">Pedido enviado</p>
+        <h1>Obrigado, {nome.trim().split(' ')[0]}.</h1>
         <p>
-          Recebemos os teus horários. A barbeira vai escolher o que lhe der mais jeito
-          e entrar em contacto contigo.
+          Recebemos os teus horários. A barbeira vai escolher o que lhe der mais jeito e entra em
+          contacto contigo pelo telemóvel que deixaste.
         </p>
-        <Link to="/">Voltar ao início</Link>
+        <Link to="/" className="btn btn-escuro">
+          Voltar ao início
+        </Link>
       </div>
     )
   }
 
   return (
-    <div>
-      <h1>Marcar corte</h1>
+    <div className="pagina">
+      <p className="etiqueta">Marcação</p>
+      <h1>Marca o teu corte</h1>
+      <p className="suave">
+        Escolhe o serviço e todos os horários em que podes. Quantos mais escolheres, mais fácil é
+        encaixar-te.
+      </p>
 
-      <h2>1. Escolhe o serviço</h2>
-      <select value={servicoId} onChange={(e) => escolherServico(e.target.value)}>
-        <option value="">-- Serviço --</option>
-        {servicos.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.nome} ({s.duracao_min} min, {s.preco}€)
-          </option>
-        ))}
-      </select>
+      <section className="passo">
+        <h2>
+          <span className="passo-num">01</span> Serviço
+        </h2>
+        <div className="servicos-escolha">
+          {servicos.map((s) => {
+            const ativo = String(s.id) === servicoId
+            return (
+              <button
+                type="button"
+                key={s.id}
+                className={`cartao-servico ${ativo ? 'ativo' : ''}`}
+                aria-pressed={ativo}
+                onClick={() => escolherServico(String(s.id))}
+              >
+                <strong>{s.nome}</strong>
+                <span>
+                  {formatarDuracao(s.duracao_min)} · {formatarPreco(s.preco)}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </section>
 
       {servico && (
-        <>
-          <h2>2. Escolhe todos os horários em que podes</h2>
-          <p>Quantos mais escolheres, mais fácil é encaixar-te.</p>
+        <form onSubmit={enviar}>
+          <section className="passo">
+            <h2>
+              <span className="passo-num">02</span> Horários
+            </h2>
 
-          {dias.length === 0 && <p>Não há horários disponíveis nos próximos dias.</p>}
+            {dias.length === 0 && (
+              <p className="suave">
+                Não há horários disponíveis nos próximos dias. Fala diretamente com ela (contacto
+                no fim da página).
+              </p>
+            )}
 
-          {dias.map(({ dia, slots }) => (
-            <div key={dia.toDateString()}>
-              <h3>
-                {dia.toLocaleDateString('pt-PT', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long',
-                })}
-              </h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {slots.map((slot) => {
-                  const iso = paraLocalISO(slot)
-                  const ativo = selecionados.includes(iso)
-                  return (
-                    <button
-                      type="button"
-                      key={iso}
-                      onClick={() => alternar(iso)}
-                      style={{
-                        padding: '6px 12px',
-                        cursor: 'pointer',
-                        background: ativo ? '#222' : '#fff',
-                        color: ativo ? '#fff' : '#222',
-                        border: '1px solid #222',
-                      }}
-                    >
-                      {pad(slot.getHours())}:{pad(slot.getMinutes())}
-                    </button>
-                  )
-                })}
+            {dias.map(({ dia, slots }) => (
+              <div className="dia" key={dia.toDateString()}>
+                <h3 className="dia-titulo">
+                  {dia.toLocaleDateString('pt-PT', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                  })}
+                </h3>
+                <div className="slots">
+                  {slots.map((slot) => {
+                    const iso = paraLocalISO(slot)
+                    const ativo = selecionados.includes(iso)
+                    return (
+                      <button
+                        type="button"
+                        key={iso}
+                        className={`slot ${ativo ? 'ativo' : ''}`}
+                        aria-pressed={ativo}
+                        onClick={() => alternar(iso)}
+                      >
+                        {pad(slot.getHours())}:{pad(slot.getMinutes())}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </section>
 
-          <h2>3. Os teus dados</h2>
-          <form onSubmit={enviar}>
-            <div>
-              <input
-                type="text"
-                placeholder="Nome"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-              />
+          <section className="passo">
+            <h2>
+              <span className="passo-num">03</span> Os teus dados
+            </h2>
+            <div className="formulario">
+              <label>
+                Nome
+                <input
+                  className="campo"
+                  type="text"
+                  autoComplete="name"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Telemóvel
+                <input
+                  className="campo"
+                  type="tel"
+                  autoComplete="tel"
+                  value={telemovel}
+                  onChange={(e) => setTelemovel(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                <span>
+                  Email <span className="suave">(opcional)</span>
+                </span>
+                <input
+                  className="campo"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </label>
+
+              <p className="resumo">
+                {selecionados.length === 0
+                  ? 'Ainda não escolheste nenhum horário.'
+                  : `Escolheste ${selecionados.length} horário(s).`}
+              </p>
+              <button type="submit" className="btn btn-escuro" disabled={aEnviar}>
+                {aEnviar ? 'A enviar…' : 'Enviar pedido'}
+              </button>
             </div>
-            <div>
-              <input
-                type="tel"
-                placeholder="Telemóvel"
-                value={telemovel}
-                onChange={(e) => setTelemovel(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                placeholder="Email (opcional)"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <p>Escolheste {selecionados.length} horário(s).</p>
-            <button type="submit" disabled={aEnviar}>
-              {aEnviar ? 'A enviar...' : 'Enviar pedido'}
-            </button>
-          </form>
-        </>
+          </section>
+        </form>
       )}
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && (
+        <p className="erro" role="alert">
+          {erro}
+        </p>
+      )}
+
+      <aside className="apoio">
+        <h3>Marcação especial?</h3>
+        <p className="suave">Se precisas de algo que não está aqui, fala diretamente com ela.</p>
+        <div className="contacto-acoes">
+          <a className="btn btn-contorno" href={TELEMOVEL_LINK}>
+            Ligar · {NEGOCIO.telemovel}
+          </a>
+          <a
+            className="btn btn-contorno"
+            href={linkWhatsApp(NEGOCIO.telemovel, 'Olá! Gostava de falar sobre uma marcação.')}
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp
+          </a>
+        </div>
+      </aside>
     </div>
   )
 }
