@@ -499,6 +499,22 @@ ul {
   border-radius: 2px;
 }
 
+.dia-horario {
+  padding: 1rem 0;
+  border-top: 1px solid var(--cinza-200);
+}
+.dia-horario h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+}
+.dia-horario .erro {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+.dia-horario li .erro {
+  margin-left: 0.5rem;
+}
+
 /* ===== Telemóvel ===== */
 @media (max-width: 720px) {
   .duas-colunas {
