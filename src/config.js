@@ -8,7 +8,7 @@ export const NEGOCIO = {
 }
 
 // Nomes dos ficheiros que estão em public/gallery
-export const FOTOS = ['foto1.jpg', 'foto2.jpg']
+export const FOTOS = ['img1.jpg', 'img2.jpg']
 
 export const INSTAGRAM_URL = `https://www.instagram.com/${NEGOCIO.instagramUser}/`
 export const TELEMOVEL_LINK = `tel:${NEGOCIO.telemovel.replace(/\s/g, '')}`
