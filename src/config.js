@@ -2,7 +2,7 @@
 export const NEGOCIO = {
   nome: 'Nome da Barbearia',
   frase: 'Cortes feitos com tempo e atenção ao detalhe.',
-  instagramUser: 'o_instagram_dela', // sem o @
+  instagramUser: 'Jbruanna', // sem o @
   telemovel: '912 345 678', // como aparece escrito no site
   zona: 'Zona / morada',
 }
