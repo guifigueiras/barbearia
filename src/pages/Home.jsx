@@ -83,7 +83,7 @@ function Home() {
       <section className="seccao seccao-cinza" id="galeria">
         <div className="container">
           <h2>Trabalhos</h2>
-          <div className="galeria">
+          <div className="galeria" role="region" aria-label="Galeria de trabalhos">
             {FOTOS.map((foto) => (
               <img
                 key={foto}
@@ -93,6 +93,7 @@ function Home() {
               />
             ))}
           </div>
+          <p className="dica-deslizar suave">Desliza para ver mais →</p>
           <p className="galeria-link">
             <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
               Ver mais no Instagram →

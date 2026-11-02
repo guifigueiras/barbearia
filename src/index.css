@@ -531,3 +531,78 @@ ul {
     width: 100%;
   }
 }
+
+
+/* ===== Aviso dos horários ===== */
+.aviso-horarios {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--cinza-50);
+  border-left: 3px solid var(--preto);
+}
+.aviso-horarios p {
+  margin: 0;
+}
+.aviso-horarios strong {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.aviso-horarios .aviso-contador {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--cinza-500);
+}
+
+/* ===== Galeria deslizante (telemóvel) ===== */
+.dica-deslizar {
+  display: none;
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 720px) {
+  .galeria {
+    display: flex;
+    gap: 0.5rem;
+    margin-inline: -1rem; /* a fila ocupa a largura toda do ecrã */
+    padding-inline: 1rem; /* mas a primeira foto alinha com o resto */
+    scroll-padding-inline: 1rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .galeria::-webkit-scrollbar {
+    display: none;
+  }
+  .galeria img {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+    aspect-ratio: 4 / 5;
+  }
+  .dica-deslizar {
+    display: block;
+  }
+}
+
+/* ===== Acesso à área reservada ===== */
+.cabecalho-acoes {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.link-painel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+.link-painel:hover {
+  text-decoration: underline;
+}
+.rodape .link-discreto {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: #8a8a8a;
+}

@@ -126,10 +126,7 @@ function Marcar() {
     <div className="pagina">
       <p className="etiqueta">Marcação</p>
       <h1>Marca o teu corte</h1>
-      <p className="suave">
-        Escolhe o serviço e todos os horários em que podes. Quantos mais escolheres, mais fácil é
-        encaixar-te.
-      </p>
+      <p className="suave">Escolhe o serviço, os horários que te dão jeito e deixa o teu contacto.</p>
 
       <section className="passo">
         <h2>
@@ -162,7 +159,21 @@ function Marcar() {
             <h2>
               <span className="passo-num">02</span> Horários
             </h2>
-
+            {dias.length > 0 && (
+              <div className="aviso-horarios" role="note">
+                <p>
+                  Escolhe <strong>todos</strong> os horários em que podes, não só um. A barbeira escolhe o que
+                  lhe der mais jeito, por isso quantos mais marcares, mais fácil é encaixar-te.
+                </p>
+                <p className="aviso-contador">
+                  {selecionados.length === 0
+                    ? 'Ainda não escolheste nenhum horário.'
+                    : selecionados.length === 1
+                      ? 'Escolheste 1 horário. Se puderes noutros, marca-os também.'
+                      : `Escolheste ${selecionados.length} horários.`}
+                </p>
+              </div>
+            )}
             {dias.length === 0 && (
               <p className="suave">
                 Não há horários disponíveis nos próximos dias. Fala diretamente com ela (contacto
