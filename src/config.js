@@ -1,10 +1,10 @@
 // Dados do negócio: muda só este ficheiro.
 export const NEGOCIO = {
-  nome: 'Nome da Barbearia',
-  frase: 'Cortes feitos com tempo e atenção ao detalhe.',
+  nome: 'Bruanna Studio', // como aparece escrito no site
+  frase: 'Cortes com identidade e alma.',
   instagramUser: 'Jbruanna', // sem o @
-  telemovel: '912 345 678', // como aparece escrito no site
-  zona: 'Zona / morada',
+  telemovel: '933752709', // como aparece escrito no site
+  zona: 'Famões / Rua do Centro Comunitário Paroquial',
 }
 
 // Nomes dos ficheiros que estão em public/gallery

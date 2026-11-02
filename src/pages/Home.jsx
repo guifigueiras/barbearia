@@ -54,7 +54,7 @@ function Home() {
               rel="noreferrer"
               className="btn btn-contorno-claro"
             >
-              Ver trabalhos no Instagram
+              Ver  mais exemplos no Instagram
             </a>
           </div>
         </div>
@@ -121,7 +121,7 @@ function Home() {
           <div>
             <h2>Contacto</h2>
             <p>
-              Precisas de uma marcação especial ou tens alguma dúvida? Fala diretamente com ela.
+              Precisas de uma marcação especial ou tens alguma dúvida? Fala diretamente comigo.
             </p>
             <div className="contacto-acoes">
               <a className="btn btn-escuro" href={TELEMOVEL_LINK}>
