@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { NEGOCIO, FOTOS, INSTAGRAM_URL, TELEMOVEL_LINK } from '../config'
+import { NEGOCIO, INSTAGRAM_URL, TELEMOVEL_LINK } from '../config'
 import { formatarPreco, formatarDuracao } from '../utils/formatar'
 import { linkWhatsApp } from '../utils/whatsapp'
+import { urlFoto } from '../utils/galeria'
+import AvisoCancelamento from '../components/AvisoCancelamento'
 
 const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
 
@@ -21,17 +23,21 @@ function organizarHorario(disponibilidade) {
 function Home() {
   const [servicos, setServicos] = useState([])
   const [disponibilidade, setDisponibilidade] = useState([])
+  const [fotos, setFotos] = useState([]) // fotos da galeria, geridas pela barbeira no /admin
 
   useEffect(() => {
     async function carregar() {
-      const [s, d] = await Promise.all([
+      const [s, d, f] = await Promise.all([
         supabase.from('servicos').select('*').eq('ativo', true).order('id'),
         supabase.from('disponibilidade').select('*'),
+        supabase.from('fotos').select('id, caminho').order('criado_em', { ascending: false }),
       ])
       if (s.error) console.error('Erro ao buscar serviços:', s.error)
       else setServicos(s.data)
       if (d.error) console.error('Erro ao buscar horário:', d.error)
       else setDisponibilidade(d.data)
+      if (f.error) console.error('Erro ao buscar fotos:', f.error)
+      else setFotos(f.data)
     }
     carregar()
   }, [])
@@ -77,23 +83,29 @@ function Home() {
               </li>
             ))}
           </ul>
+          <AvisoCancelamento />
         </div>
       </section>
 
       <section className="seccao seccao-cinza" id="galeria">
         <div className="container">
           <h2>Trabalhos</h2>
-          <div className="galeria" role="region" aria-label="Galeria de trabalhos">
-            {FOTOS.map((foto) => (
-              <img
-                key={foto}
-                src={`/gallery/${foto}`}
-                alt="Corte feito na barbearia"
-                loading="lazy"
-              />
-            ))}
-          </div>
-          <p className="dica-deslizar suave">Desliza para ver mais →</p>
+          {fotos.length > 0 && (
+            <>
+              <div className="galeria" role="region" aria-label="Galeria de trabalhos">
+                {fotos.map((foto) => (
+                  <img
+                    key={foto.id}
+                    src={urlFoto(foto.caminho)}
+                    alt="Corte feito na barbearia"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
+              </div>
+              <p className="dica-deslizar suave">Desliza para ver mais →</p>
+            </>
+          )}
           <p className="galeria-link">
             <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
               Ver mais no Instagram →

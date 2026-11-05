@@ -5,6 +5,7 @@ import { gerarSlots, paraLocalISO, pad, DIAS_A_FRENTE } from '../utils/slots'
 import { NEGOCIO, TELEMOVEL_LINK } from '../config'
 import { formatarPreco, formatarDuracao } from '../utils/formatar'
 import { linkWhatsApp } from '../utils/whatsapp'
+import AvisoCancelamento from '../components/AvisoCancelamento'
 
 function Marcar() {
   const [servicos, setServicos] = useState([])
@@ -256,6 +257,9 @@ function Marcar() {
                   ? 'Ainda não escolheste nenhum horário.'
                   : `Escolheste ${selecionados.length} horário(s).`}
               </p>
+
+              <AvisoCancelamento />
+
               <button type="submit" className="btn btn-escuro" disabled={aEnviar}>
                 {aEnviar ? 'A enviar…' : 'Enviar pedido'}
               </button>
